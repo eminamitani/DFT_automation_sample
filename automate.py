@@ -9,11 +9,15 @@ import math
 
 
 def sendToIMR(files,dir):
-    print("type your passwd for IMR supercomputer node")
+    print("type your passwd for supercomputer node")
     passwd = getpass()
+
+    #this setup is for Mac or Linux using config file for ssh connection
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
     ssh_config = paramiko.SSHConfig()
     ssh_config.parse(open(config_file, 'r'))
+
+    #please adjust for your environment
     lkup = ssh_config.lookup('super.imr')
 
     # ProxyCommand setup
@@ -52,6 +56,7 @@ def sendDirsToIMR(dirs, vaspfiles):
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
     ssh_config = paramiko.SSHConfig()
     ssh_config.parse(open(config_file, 'r'))
+    # please adjust for your environment
     lkup = ssh_config.lookup('super.imr')
 
     # ProxyCommand setup
@@ -69,8 +74,16 @@ def sendDirsToIMR(dirs, vaspfiles):
     )
 
     sftp = ssh.open_sftp()
-    workingdir='/home/emi0716/work/'
+
+    #get pass for home
+    stdin, stdout, stderr = ssh.exec_command('echo $HOME')
+    outlines = stdout.readlines()
+    result = outlines[0].rstrip('\n')
+    print(result)
+    #please change property to your enviroment
+    workingdir=result+'/work/'
     for i in dirs:
+
         mkdircommand='mkdir '+ workingdir+i
         stdin, stdout, stderr = ssh.exec_command(mkdircommand)
         outlines = stdout.readlines()
