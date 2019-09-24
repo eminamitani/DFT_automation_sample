@@ -8,7 +8,7 @@ angles=[30.0,50.0,70.0]
 dirs=[]
 
 for angle in angles:
-    dirname="TbPc2-"+site+"-"+str(angle)
+    dirname="PbPc-"+site+"-"+str(angle)
     dirs.append(dirname)
     automate.createPOSCAR('CONTCAR', [7,7,4], 15.0, angle, site, 4.6)
 
@@ -27,8 +27,4 @@ for angle in angles:
 
 automate.sendDirsToIMR(dirs,vaspfiles)
 
-#os.chdir(dirname)
-#automate.sendToIMR(vaspfiles,"/home/emi0716/work/"+dirname)
 
-#os.chdir('../')
-#os.system('pwd')

@@ -92,7 +92,7 @@ def sendDirsToIMR(dirs, vaspfiles):
     ssh.close()
 
 
-#Tb complex on Pb111 surface
+#PbPc complex on Cu111 surface
 def createPOSCAR(molecule, slabsize, vacuum, angle, site, dist):
     '''
 
@@ -102,11 +102,24 @@ def createPOSCAR(molecule, slabsize, vacuum, angle, site, dist):
     :param site: ontop or bridge or hollow
     :return: None, create POSCAR file
     '''
-    latt=4.97
-
+    latt=3.62
     mol=read(molecule,format='vasp')
-    mol.center()
-    slab = fcc111('Pb', a=latt, size=(slabsize[0], slabsize[1], slabsize[2]), vacuum=vacuum)
+    Pbposition = []
+
+    for atom in mol:
+        if (atom.symbol == 'Pb'):
+            Pbposition.append(atom.position)
+
+    positions = sorted(Pbposition, key=lambda x: x[2])
+    #print(mol.positions)
+    #centering the molecule
+    shift=[-mol.cell[0][0]/2+positions[0][0],-mol.cell[1][1]/2+positions[0][1],-mol.cell[2][2]/2+positions[0][2]]
+    mol.translate(shift)
+    mol.wrap()
+    #print(mol.positions)
+    write("PbPc-center.vasp",mol,format='vasp', vasp5=True, direct=True)
+
+    slab = fcc111('Cu',a=latt, size=(slabsize[0], slabsize[1], slabsize[2]), vacuum=vacuum)
     topLayers = []
     top = max(slab.positions[:, 2])
     for _ in slab.positions:
@@ -125,18 +138,18 @@ def createPOSCAR(molecule, slabsize, vacuum, angle, site, dist):
     elif(site=='hollow'):
         target=hollow
 
+    Pbposition = []
 
+    for atom in mol:
+        if (atom.symbol == 'Pb'):
+            Pbposition.append(atom.position)
+
+    positions = sorted(Pbposition, key=lambda x: x[2])
     adsorbates=Atoms(mol.symbols, mol.positions)
     adsorbates.set_cell(slab.get_cell(), scale_atoms=False)
-    Tbposition = []
-
-    for atom in adsorbates:
-        if (atom.symbol == 'Tb'):
-            Tbposition.append(atom.position)
-
-    positions = sorted(Tbposition, key=lambda x: x[2])
-    adsorbates.rotate(angle,'z',center=positions)
+    adsorbates.rotate(angle,'z',center=positions[0])
     vector = target - positions[0]
+
     adsorbates.translate(vector)
     adsorbates.translate([0.0, 0.0, dist])
 
@@ -147,7 +160,3 @@ def createPOSCAR(molecule, slabsize, vacuum, angle, site, dist):
     fix = FixAtoms(indices=[atom.index for atom in slab if abs(atom.position[2] - bottom) < 0.5])
     slab.set_constraint(fix)
     write("POSCAR", slab, format='vasp', vasp5=True, direct=True)
-
-
-
-
