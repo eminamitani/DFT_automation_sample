@@ -1,0 +1,40 @@
+SYSTEM = DoubleDecker
+
+#ISTART = 2
+#ICHARG = 1
+
+PREC   = Accurate  # High/medium/low
+LORBIT = 11      # 10 - Create PROOUT file
+                 # 11 - Create PROOUT file and write LDOS
+#ALGO=FAST
+
+ENCUT  =400
+IBRION = 2      # Ions move according to
+                  # conjugate-gradient algorithm
+                  # IBRION =1 for close to equilibrium
+                  # IBRION =2 for no idea for structure
+POTIM = 0.2
+ISMEAR = 0      # Occupancies 0-gaus -1-fermi
+EDIFF  = 1.E-5  # Convergent about total E
+EDIFFG = -0.02    # Convergent about F
+NSW    = 60     # Max step
+NELM = 200
+NPAR=16
+#LVHAR = .TRUE.
+ISPIN = 2
+LMAXMIX=6
+
+#EMAX=1.5
+#EMIN=-2.5
+#Sigma=0.002
+
+GGA = MK
+LUSE_VDW = .TRUE.
+PARAM1 = 0.1234
+PARAM2 =0.711357
+Zab_vdW = -1.8867
+AGGAC = 0.0
+LASPH = .TRUE.
+
+ADDGRID= .TRUE.
+LWAVE= .TRUE.
